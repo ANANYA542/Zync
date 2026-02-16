@@ -1,6 +1,4 @@
-# ER Diagram – Zync
-
-## Context
+# ER Diagram
 The ER Diagram represents the database structure of the  platform.  
 Since the system uses MongoDB, the entities are modeled as collections rather than traditional relational tables.  
 The diagram highlights how user data, academic records, schedules, and communication modules are interconnected.
