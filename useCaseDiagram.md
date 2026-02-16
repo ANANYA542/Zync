@@ -1,6 +1,4 @@
 # Use Case Diagram
-
-## Context
 The Use Case Diagram illustrates the interaction between different user roles and the Zync platform.  
 Zync is designed as an intelligent academic life synchronization system that assists students and faculty in managing schedules, attendance, workload, exam preparation, and communication.
 
