@@ -1,7 +1,7 @@
 # Sequence Diagram
 
 
-The Sequence Diagram represents the primary end-to-end interaction flow within the Zync platform when a student accesses their personalized dashboard. This flow demonstrates how multiple backend services collaborate to deliver predictive insights, attendance guidance, workload analytics, and notifications in real time.
+The Sequence Diagram represents the primary end-to-end interaction flow within the  platform when a student accesses their personalized dashboard. This flow demonstrates how multiple backend services collaborate to deliver predictive insights, attendance guidance, workload analytics, and notifications in real time.
 
 The diagram highlights the interaction between the frontend interface, backend APIs, analytical engines, and the database to ensure a seamless and intelligent academic planning experience.
 
