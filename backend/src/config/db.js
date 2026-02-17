@@ -17,20 +17,17 @@ class DatabaseConnection {
 
         try {
             const uri = process.env.MONGO_URI || 'mongodb://localhost:27017/zync';
-            const db = await mongoose.connect(uri, {
-                // useNewUrlParser and useUnifiedTopology are strictly not throwing errors usually in newer mongoose but recommended for completeness
-                // Note: Newer Mongoose no longer needs these options but we leave it clean.
-            });
+            const db = await mongoose.connect(uri);
             this.isConnected = db.connections[0].readyState;
             console.log('MongoDB connection established successfully');
         } catch (error) {
-            console.error('MongoDB connection failed. Continuing without database for now:', error.message);
+            console.error('MongoDB connection failed:', error.message);
+            throw error;
         }
     }
 }
 
 const dbConnection = new DatabaseConnection();
-// Prevent modification to the singleton
-Object.freeze(dbConnection);
+// Removed Object.freeze to allow state updates.
 
 module.exports = dbConnection;
