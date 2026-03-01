@@ -6,6 +6,9 @@ const attendanceSchema = new mongoose.Schema({
     date: { type: Date, required: true },
     status: { type: String, enum: ['present', 'absent'], required: true },
     markedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
-});
+}, { timestamps: true });
+
+attendanceSchema.index({ student: 1, course: 1, date: 1 }, { unique: true });
+attendanceSchema.index({ course: 1, date: 1 });
 
 module.exports = mongoose.model('Attendance', attendanceSchema);
