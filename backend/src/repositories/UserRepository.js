@@ -7,7 +7,7 @@ class UserRepository extends BaseRepository {
     }
 
     async findByEmail(email) {
-        return await this.model.findOne({ email });
+        return await this.model.findOne({ email: email.toLowerCase() }).select('+password');
     }
 
     async createStudent(data) {
