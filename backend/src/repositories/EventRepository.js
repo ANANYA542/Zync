@@ -9,10 +9,8 @@ class EventRepository extends BaseRepository {
     async findOverlappingEvents(userId, startTime, endTime) {
         return await this.model.find({
             participants: userId,
-            $or: [
-                { startTime: { $lt: endTime, $gte: startTime } },
-                { endTime: { $gt: startTime, $lte: endTime } }
-            ]
+            startTime: { $lt: endTime },
+            endTime: { $gt: startTime }
         });
     }
 
@@ -20,6 +18,13 @@ class EventRepository extends BaseRepository {
         return await this.model.find({
             participants: userId,
             startTime: { $gte: date }
+        }).sort({ startTime: 1 });
+    }
+
+    async findWithinWindow(userId, from, to) {
+        return await this.model.find({
+            participants: userId,
+            startTime: { $gte: from, $lte: to }
         }).sort({ startTime: 1 });
     }
 }

@@ -31,7 +31,7 @@ class AttendanceRepository extends BaseRepository {
     /**
      * Get all attendance for a specific course on a specific date.
      */
-    async findByCoursAndDate(courseId, date) {
+    async findByCourseAndDate(courseId, date) {
         const startOfDay = new Date(date);
         startOfDay.setHours(0, 0, 0, 0);
         const endOfDay = new Date(date);
