@@ -12,6 +12,10 @@ class AuthService {
      * @param {Object} data - { name, email, password, role, ...roleSpecificFields }
      */
     async register(data) {
+        if (!data.email || !data.password || !data.name || !data.role) {
+            throw new Error('name, email, password and role are required');
+        }
+
         const existing = await userRepository.findByEmail(data.email);
         if (existing) throw new Error('Email already registered');
 
@@ -20,8 +24,14 @@ class AuthService {
 
         let user;
         if (data.role === 'student') {
+            if (!data.enrollmentNumber || !data.branch || !data.semester) {
+                throw new Error('Student profile requires enrollmentNumber, branch and semester');
+            }
             user = await userRepository.createStudent({ ...data, password: hashedPassword });
         } else if (data.role === 'teacher') {
+            if (!data.employeeId || !data.department) {
+                throw new Error('Teacher profile requires employeeId and department');
+            }
             user = await userRepository.createTeacher({ ...data, password: hashedPassword });
         } else {
             user = await userRepository.create({ ...data, password: hashedPassword });
@@ -50,6 +60,9 @@ class AuthService {
      * Encapsulation — token generation is internal to this service.
      */
     _generateToken(userId, role) {
+        if (!process.env.JWT_SECRET) {
+            throw new Error('JWT_SECRET is not configured');
+        }
         return jwt.sign(
             { id: userId, role },
             process.env.JWT_SECRET,
