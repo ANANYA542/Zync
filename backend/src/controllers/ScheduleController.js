@@ -1,22 +1,17 @@
 const scheduleService = require('../services/ScheduleService');
-const { LenientConflictStrategy } = require('../patterns/ConflictStrategy');
 
 class ScheduleController {
    
     async createEvent(req, res, next) {
         try {
-           
-            if (req.query.strict === 'false') {
-                scheduleService.setConflictStrategy(new LenientConflictStrategy());
-            }
-
             const eventData = {
                 ...req.body,
                 organizer: req.user.id,
                 participants: req.body.participants || [req.user.id]
             };
 
-            const event = await scheduleService.createEvent(eventData);
+            const strictMode = req.query.strict !== 'false';
+            const event = await scheduleService.createEvent(eventData, { strictMode });
             res.status(201).json({ success: true, data: event });
         } catch (err) {
             next(err);

@@ -15,17 +15,12 @@ eventSubject.subscribe(deadlineObserver);
  * - Abstraction: conflict logic is delegated to the strategy, not hardcoded.
  */
 class ScheduleService {
-    constructor() {
-        // Default strategy: strict. Can be changed at runtime.
-        this.conflictStrategy = new StrictConflictStrategy();
-    }
-
-    /**
-     * Swap the conflict detection strategy at runtime (Strategy Pattern).
-     * @param {Object} strategy - Must implement hasConflict(startA, endA, startB, endB)
-     */
-    setConflictStrategy(strategy) {
-        this.conflictStrategy = strategy;
+    _resolveStrategy(strictMode) {
+        if (strictMode === false) {
+            const { LenientConflictStrategy } = require('../patterns/ConflictStrategy');
+            return new LenientConflictStrategy();
+        }
+        return new StrictConflictStrategy();
     }
 
     /**
@@ -33,15 +28,16 @@ class ScheduleService {
      * Before saving, we check for conflicts using the active strategy.
      * After saving, we notify all observers (Observer Pattern).
      */
-    async createEvent(data) {
+    async createEvent(data, options = {}) {
         const { participants = [], startTime, endTime } = data;
+        const conflictStrategy = this._resolveStrategy(options.strictMode);
 
         // Check conflicts for each participant
         const conflicts = [];
         for (const userId of participants) {
             const overlapping = await eventRepository.findOverlappingEvents(userId, new Date(startTime), new Date(endTime));
             const conflicting = overlapping.filter(existing =>
-                this.conflictStrategy.hasConflict(
+                conflictStrategy.hasConflict(
                     new Date(startTime), new Date(endTime),
                     new Date(existing.startTime), new Date(existing.endTime)
                 )
@@ -54,7 +50,7 @@ class ScheduleService {
         if (conflicts.length > 0) {
             const err = new Error('Schedule conflict detected');
             err.conflicts = conflicts;
-            err.strategyUsed = this.conflictStrategy.describe();
+            err.strategyUsed = conflictStrategy.describe();
             throw err;
         }
 
