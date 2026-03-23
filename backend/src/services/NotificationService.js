@@ -1,4 +1,5 @@
 const notificationRepository = require('../repositories/NotificationRepository');
+const scheduleService = require('./ScheduleService');
 
 /**
  * NotificationService - manage user notifications.
@@ -19,6 +20,20 @@ class NotificationService {
 
     async createNotification(userId, title, message, type = 'alert') {
         return await notificationRepository.create({ user: userId, title, message, type });
+    }
+
+    async getInsightSummary(userId, role) {
+        const unread = await this.getUnread(userId);
+        const workload = await scheduleService.getWorkloadScore(userId, role);
+
+        return {
+            unreadCount: unread.length,
+            workloadLevel: workload.level,
+            workloadScore: workload.workloadScore,
+            recommendedAction: workload.level === 'high'
+                ? 'Re-prioritize tasks and avoid adding non-critical events this week.'
+                : 'Maintain your current schedule cadence.'
+        };
     }
 }
 

@@ -28,6 +28,15 @@ class NotificationController {
             next(err);
         }
     }
+
+    async getInsights(req, res, next) {
+        try {
+            const data = await notificationService.getInsightSummary(req.user.id, req.user.role);
+            res.status(200).json({ success: true, data });
+        } catch (err) {
+            next(err);
+        }
+    }
 }
 
 module.exports = new NotificationController();
